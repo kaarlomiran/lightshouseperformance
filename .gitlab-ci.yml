@@ -1,0 +1,27 @@
+image: node:latest
+
+stages:
+  - test
+  - performance
+
+# Example job for other tests
+test_job:
+  stage: test
+  script:
+    - echo "Running other tests"
+
+# Lighthouse Performance Job
+lighthouse_performance:
+  stage: performance
+  script:
+    - npm install
+    - node lighthouse-automation.js  # Run the Lighthouse script
+  artifacts:
+    paths:
+      - "*.html"  # Store the generated HTML report as an artifact
+    expire_in: 1 week  # Retain artifacts for one week
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+      when: manual  # Optional run when on the main branch
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual  # Optional run on merge requests
